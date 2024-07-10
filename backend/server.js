@@ -10,6 +10,8 @@ import messageRoutes from "./routes/messageRoutes.js";
 
 import { io, app, server } from "./socket/socket.js";
 
+import path from "path";
+
 
 dotenv.config();
 
@@ -23,6 +25,7 @@ cloudinary.config({
 
 const PORT = process.env.PORT || 8080;
 
+const __dirname = path.resolve();
 
 // Middlewares
 app.use(express.json({ limit: "50mb" })); // To parse JSON data in the req.body
@@ -33,6 +36,15 @@ app.use(cookieParser());
 app.use("/api/users",userRoutes);
 app.use("/api/posts",postRoutes);
 app.use("/api/messages",messageRoutes);
+
+if (process.env.NODE_ENV === "production") {
+	app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+	// react app
+	app.get("*", (req, res) => {
+		res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+	});
+}
 
 server.listen(PORT,() => {
     console.log(`Server is running in port ${PORT}`);
