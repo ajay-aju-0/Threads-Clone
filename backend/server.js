@@ -11,11 +11,13 @@ import messageRoutes from "./routes/messageRoutes.js";
 import { io, app, server } from "./socket/socket.js";
 
 import path from "path";
+import job from "./cron/cron.js";
 
 
 dotenv.config();
 
 connectDB();
+job.start();
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
